@@ -6,7 +6,6 @@ library(biomaRt)
 library(org.Dr.eg.db)
 library(clusterProfiler)
 
-
 # read in the normalized counts
 cpm <- read.csv('/Users/sophiemarcotte/Desktop/bulkRNAdata/normalized_counts.csv', row.names=1, check.names = FALSE)
 
@@ -64,8 +63,8 @@ ggplot(data_long, aes(x = timepoint, y = gene_count, fill = group)) +
   )
 
 ################# VOLCANO PLOTS ################
-results <- AllTvsAllC
-title_p <- "DE Genes: Regenerating vs Healthy"
+results <- timepoint4.5vs1.5
+title_p <- "DE Genes: 4.5 dpa vs 1.5 dpa"
 
 # connect to zebrafish database
 ensembl <- useMart("ensembl", dataset = "drerio_gene_ensembl")
@@ -124,11 +123,11 @@ volcano_plot_labeled <- ggplot(results, aes(x = logFC, y = neg_log10_FDR, color 
         legend.position = "right") +
   guides(color = guide_legend(override.aes = list(alpha = 1)))
 
-ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/volcano_plot_AllTvsAllC.png", plot = volcano_plot_labeled, width = 9, height = 5, dpi = 300, bg = "white")
+ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/volcano_plot_timepoint4.5vs1.5.png", plot = volcano_plot_labeled, width = 9, height = 5, dpi = 300, bg = "white")
 
 ############### KEGG and GO PLOTS #################
-results <- AllTvsAllC
-title_p <- "Regenerating vs Healthy"
+results <- timepoint4.5vs1.5
+title_p <- "4.5 vs 1.5 dpa"
 
 # add a column for -log10(FDR)
 results$neg_log10_FDR <- -log10(results$FDR)
@@ -185,7 +184,7 @@ if (!is.null(go_up) && nrow(go_up@result) > 0) {
   go_up_plot <- dotplot(go_up, showCategory = 10, title = paste("GO Enrichment - Upregulated Genes", title_p)) +
     theme(plot.title = element_text(hjust = 0.5, face = "bold"))
   print(go_up_plot)
-  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/GO_upregulated_AllTvsAllC.png", plot = go_up_plot, width = 10, height = 7, dpi = 300, bg = "white")
+  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/GO_upregulated_timepoint4.5vs1.5.png", plot = go_up_plot, width = 10, height = 7, dpi = 300, bg = "white")
 }
 
 # GO Dotplot - Downregulated
@@ -193,7 +192,7 @@ if (!is.null(go_down) && nrow(go_down@result) > 0) {
   go_down_plot <- dotplot(go_down, showCategory = 10, title = paste("GO Enrichment - Downregulated Genes", title_p)) +
     theme(plot.title = element_text(hjust = 0.5, face = "bold"))
   print(go_down_plot)
-  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/GO_downregulated_AllTvsAllC.png", plot = go_down_plot, width = 10, height = 7, dpi = 300, bg = "white")
+  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/GO_downregulated_timepoint4.5vs1.5.png", plot = go_down_plot, width = 10, height = 7, dpi = 300, bg = "white")
 }
 
 # KEGG Dotplot - Upregulated
@@ -201,7 +200,7 @@ if (!is.null(kegg_up) && nrow(kegg_up@result) > 0) {
   kegg_up_plot <- dotplot(kegg_up, showCategory = 10, title = paste("KEGG Pathways - Upregulated Genes", title_p)) +
     theme(plot.title = element_text(hjust = 0.5, face = "bold"))
   print(kegg_up_plot)
-  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/KEGG_upregulated_AllTvsAllC.png", plot = kegg_up_plot, width = 10, height = 7, dpi = 300, bg = "white")
+  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/KEGG_upregulated_timepoint4.5vs1.5.png", plot = kegg_up_plot, width = 10, height = 7, dpi = 300, bg = "white")
 }
 
 # KEGG Dotplot - Downregulated
@@ -209,5 +208,5 @@ if (!is.null(kegg_down) && nrow(kegg_down@result) > 0) {
   kegg_down_plot <- dotplot(kegg_down, showCategory = 10, title = paste("KEGG Pathways - Downregulated Genes", title_p)) +
     theme(plot.title = element_text(hjust = 0.5, face = "bold"))
   print(kegg_down_plot)
-  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/KEGG_downregulated_AllTvsAllC.png", plot = kegg_down_plot, width = 10, height = 7, dpi = 300, bg = "white")
+  ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/KEGG_downregulated_timepoint4.5vs1.5.png", plot = kegg_down_plot, width = 10, height = 7, dpi = 300, bg = "white")
 }
