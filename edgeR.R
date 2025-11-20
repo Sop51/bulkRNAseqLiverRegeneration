@@ -48,6 +48,8 @@ qlf_timepoint3vs2 <- glmQLFTest(fit, contrast = c(0, 0, 0, 0, -1, 1))
 qlf_timepoint1 <- glmQLFTest(fit, contrast = c(-1, 0, 0, 1, 0, 0))
 qlf_timepoint2 <- glmQLFTest(fit, contrast = c(0, -1, 0, 0, 1, 0))
 qlf_timepoint3 <- glmQLFTest(fit, contrast = c(0, 0, -1, 0, 0, 1))
+qlf_timepointControl2vsControl1 <- glmQLFTest(fit, contrast = c(-1, 1, 0, 0, 0, 0))
+qlf_timepointControl3vsControl2 <- glmQLFTest(fit, contrast = c(0, -1, 1, 0, 0, 0))
 
 # export results from edgeR to CSV
 write.csv(topTags(qlf_timepoint2vs1, n=Inf)$table, file="/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint1.5vs0.csv")
@@ -57,6 +59,9 @@ write.csv(topTags(qlf_timepoint1, n=Inf)$table, file="/Users/sophiemarcotte/Desk
 write.csv(topTags(qlf_timepoint2, n=Inf)$table, file="/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint1.5vsAll.csv")
 write.csv(topTags(qlf_timepoint3, n=Inf)$table, file="/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint4.5vsAll.csv")
 write.csv(topTags(qlf_treatvscontrol, n=Inf)$table, file="/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_AllTvsAllC.csv")
+write.csv(topTags(qlf_timepointControl2vsControl1, n=Inf)$table, file="/Users/sm2949/Desktop/bulkRNAdata/qlf_timepointControl1.5vsControl0.csv")
+write.csv(topTags(qlf_timepointControl3vsControl2, n=Inf)$table, file="/Users/sm2949/Desktop/bulkRNAdata/qlf_timepointControl4.5vsControl1.5.csv")
+
 
 # look at the results of all treated vs control
 results <- as.data.frame(qlf_treatvscontrol)
