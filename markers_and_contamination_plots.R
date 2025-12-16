@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggplot2)
 library(org.Dr.eg.db)
 library(AnnotationDbi)
+library(pheatmap)
 
 # read in the normalized counts matrix
 cpms <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/normalized_counts.csv", row.names = 1)

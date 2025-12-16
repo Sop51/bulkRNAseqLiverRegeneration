@@ -11,8 +11,8 @@ twovsone <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepointControl1.5v
 threevstwo <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepointControl4.5vsControl1.5.csv")
 
 # filter only for significant genes
-twovsonesig <- twovsone[twovsone$logFC > 1 & twovsone$FDR < 0.05,]
-threevstwosig <- threevstwo[threevstwo$logFC > 1 & threevstwo$FDR < 0.05,]
+twovsonesig <- twovsone[abs(twovsone$logFC) > 1 & twovsone$FDR < 0.05,]
+threevstwosig <- threevstwo[abs(threevstwo$logFC) > 1 & threevstwo$FDR < 0.05,]
 
 ############################## DE GO and KEGG ###############################
 # prepare input for twovsone
@@ -132,22 +132,3 @@ ggplot(df, aes(x = PC1, y = PC2, color = timepoint)) +
   ) +
   guides(color = guide_legend(override.aes = list(size = 4)))
 
-#################### Genes changing between time points #################
-# filter for the top 20 changing genes between groups 
-top20twovsonesig <- head(twovsonesig, n=20)
-top20threevstwosig <- head(threevstwosig, n=20)
-
-# convert to gene symbols 
-mart <- useDataset("drerio_gene_ensembl", useMart("ensembl"))
-gene_list1 <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id", "external_gene_name"), values = top20twovsonesig$X, mart = mart)
-top20twovsonesig <- merge(top20twovsonesig, gene_list1, by.x="X", by.y="ensembl_gene_id")
-gene_list2 <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id", "external_gene_name"), values = top20threevstwosig$X, mart = mart)
-top20threevstwosig <- merge(top20threevstwosig, gene_list2, by.x="X", by.y="ensembl_gene_id")
-
-# combine into one
-genes_to_plot <- union(top20twovsonesig$external_gene_name, top20threevstwosig$external_gene_name)
-
-# pull genes out of cpm matrix
-# convert cpm matrix first 
-gene_list_all <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id", "external_gene_name"), values = rownames(cpms_control), mart = mart)
-control_cpm_symbols <- merge(top20twovsonesig, gene_list1, by.x="X", by.y="ensembl_gene_id")
