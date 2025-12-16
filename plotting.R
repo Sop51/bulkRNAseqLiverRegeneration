@@ -14,9 +14,9 @@ timepoint1.5vs0 <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timep
 timepoint4.5vs0 <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint4.5vs0.csv", row.names = 1)
 timepoint4.5vs1.5 <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint4.5vs1.5.csv", row.names = 1)
 
-timepoint0vsAll <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint0vsAll.csv", row.names = 1)
-timepoint1.5vsAll <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint1.5vsAll.csv", row.names = 1)
-timepoint4.5vsAll <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_timepoint4.5vsAll.csv", row.names = 1)
+timepoint0vsAll <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepoint0vsAll.csv", row.names = 1)
+timepoint1.5vsAll <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepoint1.5vsAll.csv", row.names = 1)
+timepoint4.5vsAll <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepoint4.5vsAll.csv", row.names = 1)
 
 AllTvsAllC <- read.csv("/Users/sophiemarcotte/Desktop/bulkRNAdata/qlf_AllTvsAllC.csv", row.names = 1)
 
@@ -210,3 +210,78 @@ if (!is.null(kegg_down) && nrow(kegg_down@result) > 0) {
   print(kegg_down_plot)
   ggsave("/Users/sophiemarcotte/Desktop/bulkRNAdata/plots/KEGG_downregulated_timepoint4.5vs1.5.png", plot = kegg_down_plot, width = 10, height = 7, dpi = 300, bg = "white")
 }
+
+############## plot of DE genes across the different timepoints ################
+logFC_cutoff <- 1 # threshold
+
+# define function to classify DE genes
+classify_genes <- function(df, timepoint) {
+  df %>%
+    mutate(
+      category = case_when(
+        !is.na(FDR) & FDR < 0.05 & logFC > 0 ~ "Upregulated",
+        !is.na(FDR) & FDR < 0.05 & logFC < 0 ~ "Downregulated",
+        TRUE ~ "No Change"
+      ),
+      timepoint = timepoint
+    )
+}
+
+# run function on all timepoints
+tp0  <- classify_genes(timepoint0vsAll,  "0 dpa")
+tp15 <- classify_genes(timepoint1.5vsAll, "1.5 dpa")
+tp45 <- classify_genes(timepoint4.5vsAll, "4.5 dpa")
+
+# combine 
+summary_df <- bind_rows(tp0, tp15, tp45) %>%
+  count(timepoint, category)
+
+# factor with levels
+summary_df$category <- factor(
+  summary_df$category,
+  levels = c("Downregulated", "No Change", "Upregulated")
+)
+
+# define colors
+colors <- c(
+  "Upregulated"   = "#D55E00",
+  "Downregulated" = "#0072B2",
+  "No Change"   = "grey70"
+)
+
+# barplot
+ggplot(summary_df, aes(x = timepoint, y = n, fill = category)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_text(
+    aes(label = n),
+    position = position_dodge(width = 0.9),
+    vjust = -0.3,
+    size = 4
+  ) +
+  scale_fill_manual(values = colors) +
+  labs(
+    title = "Differential Gene Expression Across Regeneration Timepoints",
+    x = "Timepoint",
+    y = "Number of genes",
+    fill = "Regulation"
+  ) +
+  theme_classic(base_size = 14)
+
+# factor timepoints
+summary_df$timepoint <- factor(
+  summary_df$timepoint,
+  levels = c("0 dpa", "1.5 dpa", "4.5 dpa")
+)
+
+# line plot
+ggplot(summary_df, aes(x = timepoint, y = n, color = category, group = category)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  scale_color_manual(values = colors) +
+  labs(
+    title = "Differential Gene Expression Across Regeneration Timepoints",
+    x = "Timepoint",
+    y = "Number of genes",
+    color = "Regulation"
+  ) +
+  theme_classic(base_size = 14)
