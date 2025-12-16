@@ -13,7 +13,7 @@ timepoint1.5vsAll <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepoint1.
 timepoint4.5vsAll <- read.csv("/Users/sm2949/Desktop/bulkRNAdata/qlf_timepoint4.5vsAll.csv", row.names = 1)
 
 # define timepoint to use
-df <- timepoint0vsAll
+df <- timepoint1.5vsAll
 
 # create ranked list
 gene_df <- df %>%
@@ -66,10 +66,10 @@ kk2 <- pairwise_termsim(kk2)
 emapplot(kk2)
 
 
-# run on go terms ----
+# run on reactome pathways ----
 
 # define timepoint to use
-df <- timepoint0vsAll
+df <- timepoint4.5vsAll
 
 # subset to only positive and significant
 df <- df[(df$logFC > 1 & df$FDR < 0.05), ]
@@ -81,15 +81,17 @@ gene <- bitr(
   OrgDb    = organism
 )
 
-ego <- enrichGO(gene = gene$ENTREZID,
-                OrgDb = organism,
-                ont = "BP",
-                pAdjustMethod = "BH",
-                pvalueCutoff  = 0.01,
-                qvalueCutoff  = 0.05)
 
-ego <- pairwise_termsim(ego)
+react <- enrichPathway(
+  gene = gene$ENTREZID,
+  organism = "zebrafish",
+  pvalueCutoff = 0.05
+)
 
-emapplot(ego)
+react <- setReadable(react, OrgDb = org.Dr.eg.db)
+
+react <- pairwise_termsim(react)
+
+emapplot(react)
 
 
