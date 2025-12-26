@@ -2,7 +2,7 @@
 
 This repository contains scripts for the analysis of bulk RNA-seq data generated from a zebrafish liver regeneration model. Liver samples were collected at three timepoints following ablation:
 
-- **0 days post ablation (dpa)**
+- **0 days post ablation**
 - **1.5 days post ablation**
 - **4.5 days post ablation**
 
